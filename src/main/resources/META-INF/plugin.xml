@@ -1,0 +1,19 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.github.dankinsoid.appcodeassets</id>
+    <name>AppCodeAssets</name>
+    <vendor>dankinsoid</vendor>
+
+    <depends>com.intellij.modules.appcode</depends>
+    <idea-version since-build="211"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <treeStructureProvider implementation="com.github.dankinsoid.appcodeassets.services.AssetsTreeProvider"/>
+        <fileType name="contents.json"
+                  implementationClass="com.github.dankinsoid.appcodeassets.services.ContentJSONFileType"
+                  fieldName="INSTANCE"
+                  language="contents.json"
+                  extensions="json"/>
+        <fileEditorProvider implementation="com.github.dankinsoid.appcodeassets.services.ContentJSONViewProvider"/>
+    </extensions>
+</idea-plugin>
