@@ -5,21 +5,8 @@
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
 
 <!-- Plugin description -->
-This plugin provides integration with [`Tuist` commmands](https://docs.tuist.io/commands).
+This plugin provides support for assets.
 
-## Usage
-Commands are available in <kbd>Tools</kbd> > <kbd>Tuist</kbd> menu. It's recommended to add keymaps for these commands.
-While editing a manifest projects `tuist generate` calls automatically on saving, as well as `tuist fetch` while editing the `Dependencies.swift`.
-
-## Available commands
-- Generate - [`tuist generate -n`](https://docs.tuist.io/commands/generate).
-- Edit Manifests - [`tuist edit`](https://docs.tuist.io/commands/edit) in `AppCode`.
-- Fetch Dependencies - [`tuist fetch`](https://docs.tuist.io/commands/dependencies) and [`tuist generate -n`](https://docs.tuist.io/commands/generate).
-- Update Dependencies - [`tuist fetch --update`](https://docs.tuist.io/commands/dependencies) and [`tuist generate -n`](https://docs.tuist.io/commands/generate).
-- Clean Dependencies - [`tuist clean dependencies`](https://docs.tuist.io/commands/dependencies).
-- Build - [`tuist build`](https://docs.tuist.io/commands/build).
-- Clean - [`tuist clean`](https://docs.tuist.io/commands/clean).
-- Test - [`tuist test`](https://docs.tuist.io/commands/test).
 <!-- Plugin description end -->
 
 ## License
