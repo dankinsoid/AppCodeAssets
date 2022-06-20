@@ -7,11 +7,13 @@ import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.ui.PerspectiveFileEditor
 import java.beans.PropertyChangeListener
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.JScrollPane
 
 class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEditor(project, file) {
 
@@ -77,9 +79,10 @@ class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEdi
 
     override fun createCustomComponent(): JComponent {
         val extension = Extensions.create(file.parent?.extension) ?: return JPanel()
-        return when (extension) {
+        val content = when (extension) {
             Extensions.colorset -> ColorAssetComponent(file)
             else -> JPanel()
         }
+        return JBScrollPane(content)
     }
 }

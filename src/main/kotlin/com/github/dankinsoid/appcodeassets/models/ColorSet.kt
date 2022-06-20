@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.intellij.openapi.vfs.VirtualFile
 import java.awt.Color
+import java.lang.Double.max
+import java.lang.Double.min
 
 data class ColorSet(
     var info: Info = Info(),
@@ -66,7 +68,7 @@ fun String.toComponent(): Int {
     return if (this.startsWith("0x")) {
         this.substring(2).toInt(16)
     } else {
-        (this.toDouble() * 255).toInt()
+        (max(0.0, min(1.0, this.toDouble())) * 255).toInt()
     }
 }
 
@@ -74,7 +76,13 @@ enum class ColorSpace {
     srgb,
 
     @SerializedName("display-p3")
-    displayP3;
+    displayP3,
+
+    @SerializedName("extended-linear-srgb")
+    extendedLinearSrgb,
+
+    @SerializedName("extended-srgb")
+    extendedSrgb;
 }
 
 data class ColorAppearance(
@@ -82,13 +90,37 @@ data class ColorAppearance(
     var value: AppearanceValue = AppearanceValue.dark
 )
 
+enum class AppearanceValue {
+    dark,
+    high,
+    light
+}
+
 enum class Appearance {
     luminosity,
     contrast
 }
 
-enum class AppearanceValue {
-    dark,
-    high,
-    light
+enum class Appearances {
+    none,
+    anyAndDark,
+    anyAndDarkAndLight;
+
+    val title: String
+        get() = when (this) {
+            none -> "None"
+            anyAndDark -> "Any, Dark"
+            anyAndDarkAndLight -> "Any, Dark and Light"
+        }
+}
+
+enum class Gamuts {
+    none,
+    srgbAndDisplayP3;
+
+    val title: String
+        get() = when (this) {
+            none -> "None"
+            srgbAndDisplayP3 -> "sRGB and DisplayP3"
+        }
 }
