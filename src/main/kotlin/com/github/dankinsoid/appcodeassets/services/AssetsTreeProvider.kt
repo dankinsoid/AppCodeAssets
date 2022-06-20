@@ -16,7 +16,9 @@ import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetWrapper.Icon
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.impl.file.PsiDirectoryFactoryImpl
 import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.util.ui.ColorIcon
 import com.intellij.util.ui.MenuItemCheckIconFactory
+import java.awt.Color
 import javax.swing.text.StyleConstants.ColorConstants
 
 class AssetsTreeProvider: TreeStructureProvider {
@@ -37,7 +39,7 @@ class AssetsTreeProvider: TreeStructureProvider {
         }
         if (parent is PsiDirectoryNode) {
             val file = parent.virtualFile ?: return children
-            if (file.extension == assetsExtension) {
+            if (file.extension == null && file.hasAncestor { it.extension == assetsExtension }) {
                 return xcassets(file, parent.project, settings)
             }
         }
@@ -54,9 +56,20 @@ class AssetsTreeProvider: TreeStructureProvider {
             it.extension?.isEmpty() ?: true || Extensions.contains(it.extension)
         }.forEach {
             val directory = PsiDirectoryFactoryImpl.getInstance(project).createDirectory(it)
-            val node = PsiDirectoryNode(project, directory, settings)
+            val node = ColorDirectoryNode(project, directory, settings)
             nodes.add(node)
         }
         return nodes
     }
+}
+
+fun VirtualFile.hasAncestor(condition: (VirtualFile) -> Boolean): Boolean {
+    var current = parent
+    while (current != null) {
+        if (condition(current)) {
+            return true
+        }
+        current = current.parent
+    }
+    return false
 }

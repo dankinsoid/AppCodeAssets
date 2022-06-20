@@ -15,6 +15,8 @@ import javax.swing.JPanel
 
 class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEditor(project, file) {
 
+    private var domElement: DomElement? = null
+
 //    override fun <T : Any?> getUserData(key: Key<T>): T? {
 //        return null
 //    }
@@ -66,10 +68,11 @@ class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEdi
     }
 
     override fun getSelectedDomElement(): DomElement? {
-        return null
+        return domElement
     }
 
-    override fun setSelectedDomElement(p0: DomElement?) {
+    override fun setSelectedDomElement(element: DomElement?) {
+        domElement = element
     }
 
     override fun createCustomComponent(): JComponent {

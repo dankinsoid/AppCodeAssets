@@ -16,7 +16,6 @@ class ContentJSONViewProvider: PerspectiveFileEditorProvider() {
     }
 
     override fun createEditor(project: Project, file: VirtualFile): PerspectiveFileEditor {
-        println("${file.name}")
         return ContentJSONEditor(project, file)
     }
 }

@@ -3,6 +3,10 @@ package com.github.dankinsoid.appcodeassets.models
 import com.google.gson.annotations.SerializedName
 
 enum class Idiom {
+
+    /// The image works on any device and platform.
+    universal,
+
     /// An image shown app launcher on watchOS
     appLauncher,
 
@@ -32,13 +36,29 @@ enum class Idiom {
     /// The image is for Apple TV.
     tv,
 
-    /// The image works on any device and platform.
-    universal,
-
     /// The image is for the Apple Watch devices.
     watch,
+
+    car,
 
     /// An image for the App Store icon.
     @SerializedName("watch-marketing")
     watchMarketing;
 }
+
+val Idiom.title: String
+    get() = when (this) {
+        Idiom.universal -> "Universal"
+        Idiom.appLauncher -> "App Launcher"
+        Idiom.companionSettings -> "Companion Settings"
+        Idiom.iosMarketing -> "iOS Marketing"
+        Idiom.iphone -> "iPhone"
+        Idiom.ipad -> "iPad"
+        Idiom.mac -> "Mac"
+        Idiom.notificationCenter -> "Notification Center"
+        Idiom.quickLook -> "Quick Look"
+        Idiom.tv -> "Apple TV"
+        Idiom.watch -> "Watch"
+        Idiom.watchMarketing -> "Watch Marketing"
+        Idiom.car -> "CarPlay"
+    }

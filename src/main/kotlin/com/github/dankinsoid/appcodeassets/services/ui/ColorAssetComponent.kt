@@ -1,45 +1,48 @@
 package com.github.dankinsoid.appcodeassets.services.ui
 
 import com.github.dankinsoid.appcodeassets.models.ColorSet
+import com.github.dankinsoid.appcodeassets.models.Idiom
+import com.github.dankinsoid.appcodeassets.models.title
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.intellij.openapi.vfs.VirtualFile
+import net.miginfocom.swing.MigLayout
+import org.jdesktop.swingx.painter.AbstractLayoutPainter
 import java.awt.Color
 import java.awt.FlowLayout
+import java.awt.GridBagLayout
 import java.awt.GridLayout
-import javax.swing.JButton
-import javax.swing.JComponent
-import javax.swing.JFrame
-import javax.swing.JPanel
+import javax.swing.*
 
 
-class ColorAssetComponent(val file: VirtualFile): JComponent() {
+class ColorAssetComponent(val file: VirtualFile): JPanel(FlowLayout(FlowLayout.LEADING)) {
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val frame = JFrame("Oval Sample")
-        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        frame.layout = GridLayout(2, 2)
-        val colors: Array<Color> = arrayOf<Color>(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW)
-        for (i in 0..3) {
-            val panel = OvalPanel(colors[i])
-            panel.add(JButton("asdf"))
-            frame.add(panel)
+    private var deviceCheckboxs: MutableMap<Idiom, JCheckBox> = mutableMapOf()
+
+    init {
+        val panel = JPanel().apply {
+            layout = BoxLayout(this, BoxLayout.Y_AXIS)
+            add(JLabel("Devices"))
+            val panel = JPanel().apply {
+                alignmentX = LEFT_ALIGNMENT
+                layout = BoxLayout(this, BoxLayout.Y_AXIS)
+                for (device in Idiom.values()) {
+                    val checkbox = JCheckBox(device.title)
+                    deviceCheckboxs[device] = checkbox
+                    add(checkbox)
+                }
+            }
+            add(panel)
         }
-        frame.setSize(300, 200)
-        frame.isVisible = true
+        add(panel)
     }
 
-    fun colorSet(): ColorSet {
-        val json = String(file.contentsToByteArray(), Charsets.UTF_8)
-        return try { Gson().fromJson(json, ColorSet::class.java) } catch (_: Error) { ColorSet() }
-    }
-
-    fun save(colorSet: ColorSet) {
-        try {
+    var colorSet: ColorSet
+        get() = ColorSet.get(file)
+        set(value) = try {
             val gson = GsonBuilder().setPrettyPrinting().create()
-            val json = gson.toJson(colorSet)
+            val json = gson.toJson(value)
             file.setBinaryContent(json.toByteArray(Charsets.UTF_8))
-        } catch (_: Error) {}
-    }
+        } catch (_: Throwable) {
+        }
 }
