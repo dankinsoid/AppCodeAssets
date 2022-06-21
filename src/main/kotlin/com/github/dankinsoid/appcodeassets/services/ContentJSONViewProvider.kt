@@ -11,8 +11,10 @@ import com.intellij.util.xml.ui.PerspectiveFileEditorProvider
 
 class ContentJSONViewProvider: PerspectiveFileEditorProvider() {
 
+    private val supported = listOf(Extensions.colorset)
+
     override fun accept(project: Project, file: VirtualFile): Boolean {
-        return file.name == "Contents.json" && Extensions.contains(file.parent?.extension)
+        return file.name == "Contents.json" && supported.map { it.name }.contains(file.parent?.extension)
     }
 
     override fun createEditor(project: Project, file: VirtualFile): PerspectiveFileEditor {

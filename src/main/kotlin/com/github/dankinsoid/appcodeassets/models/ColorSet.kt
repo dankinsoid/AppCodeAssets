@@ -44,17 +44,20 @@ data class ColorData(
     var reference: String?,
     @SerializedName("color-space") var colorSpace: ColorSpace?,
     var components: Components?
-)
+) {
+
+    override fun equals(other: Any?): Boolean {
+        val otherColor = (other as? ColorData)?.color() ?: return false
+        val color = this.color()
+        return color.red == otherColor.red &&
+                color.green == otherColor.green &&
+                color.blue == otherColor.blue &&
+                color.alpha == otherColor.alpha
+    }
+}
 
 fun ColorData.color(): Color {
-    return components?.let {
-        return Color(
-            it.red.toComponent(),
-            it.green.toComponent(),
-            it.blue.toComponent(),
-            it.alpha.toComponent()
-        )
-    } ?: Color(0, 0, 0, 0)
+    return components?.color() ?: Color(0, 0, 0, 1)
 }
 
 data class Components(
@@ -62,7 +65,16 @@ data class Components(
     var green: String,
     var blue: String,
     var alpha: String
-)
+) {
+    fun color(): Color {
+        return Color(
+            red.toComponent(),
+            green.toComponent(),
+            blue.toComponent(),
+            alpha.toComponent()
+        )
+    }
+}
 
 fun String.toComponent(): Int {
     return if (this.startsWith("0x")) {
@@ -70,6 +82,15 @@ fun String.toComponent(): Int {
     } else {
         (max(0.0, min(1.0, this.toDouble())) * 255).toInt()
     }
+}
+
+fun Color.components(): Components {
+    return Components(
+        String.format("0x%02X", red),
+        String.format("0x%02X", green),
+        String.format("0x%02X", blue),
+        String.format("0x%02X", alpha)
+    )
 }
 
 enum class ColorSpace {
@@ -83,6 +104,20 @@ enum class ColorSpace {
 
     @SerializedName("extended-srgb")
     extendedSrgb;
+
+    val title: String
+        get() = when (this) {
+            srgb -> "sRGB"
+            displayP3 -> "Display P3"
+            extendedLinearSrgb -> "Extended Linear sRGB"
+            extendedSrgb -> "Extended sRGB"
+        }
+
+    val gamut: Gamut
+        get() = when (this) {
+            displayP3 -> Gamut.displayP3
+            else -> Gamut.sRGB
+        }
 }
 
 data class ColorAppearance(
@@ -90,10 +125,23 @@ data class ColorAppearance(
     var value: AppearanceValue = AppearanceValue.dark
 )
 
+val Iterable<ColorAppearance>.luminosity: AppearanceValue?
+    get() = firstOrNull { it.appearance == Appearance.luminosity }?.value
+
+val Iterable<ColorAppearance>.highContrast: Boolean
+    get() = firstOrNull { it.value == AppearanceValue.high } != null
+
 enum class AppearanceValue {
     dark,
     high,
-    light
+    light;
+
+    val title: String
+        get() = when (this) {
+            dark -> "Dark"
+            high -> "High"
+            light -> "Light"
+        }
 }
 
 enum class Appearance {
@@ -112,15 +160,23 @@ enum class Appearances {
             anyAndDark -> "Any, Dark"
             anyAndDarkAndLight -> "Any, Dark and Light"
         }
-}
 
-enum class Gamuts {
-    none,
-    srgbAndDisplayP3;
-
-    val title: String
+    val appearances: List<AppearanceValue?>
         get() = when (this) {
-            none -> "None"
-            srgbAndDisplayP3 -> "sRGB and DisplayP3"
+            none -> listOf(null)
+            anyAndDark -> listOf(null, AppearanceValue.dark)
+            anyAndDarkAndLight -> listOf(null, AppearanceValue.dark, AppearanceValue.light)
         }
+
+    companion object {
+        fun fromArray(array: Array<AppearanceValue>): Appearances {
+            return if (array.contains(AppearanceValue.light)) {
+                anyAndDarkAndLight
+            } else if (array.contains(AppearanceValue.dark)) {
+                anyAndDark
+            } else {
+                none
+            }
+        }
+    }
 }

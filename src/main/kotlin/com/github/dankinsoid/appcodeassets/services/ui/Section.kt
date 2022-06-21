@@ -1,27 +1,27 @@
 package com.github.dankinsoid.appcodeassets.services.ui
 
 import com.intellij.uiDesigner.core.Spacer
+import java.awt.Color
+import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.geom.Rectangle2D
 import javax.swing.*
 
-class Section<Content: JComponent>(val title: String, val content: () -> Content): JPanel() {
+class Section<Content: JComponent>(title: String, val content: () -> Content): Box(BoxLayout.PAGE_AXIS) {
 
     init {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        add(JLabel(title))
-        add(Box.createRigidArea(java.awt.Dimension(0, 5)))
-        val content = this.content()
-        add(
-            JPanel().apply {
-                layout = FlowLayout(FlowLayout.LEFT, 0, 0)
-                content.alignmentX = LEFT_ALIGNMENT
-                add(content)
-                add(Spacer())
-                alignmentX = LEFT_ALIGNMENT
-            }
-        )
+        add(JLabel("<html><pre>$title</pre></html>"))
+        add(createRigidArea(Dimension(0, 5)))
+        add(content().apply { alignmentX = LEFT_ALIGNMENT })
         add(JSeparator(SwingConstants.HORIZONTAL))
         alignmentX = LEFT_ALIGNMENT
     }
+}
+
+fun <T: JComponent> JComponent.addSection(title: String, block: () -> T) {
+    add(
+        Section(title) {
+            block()
+        }
+    )
 }

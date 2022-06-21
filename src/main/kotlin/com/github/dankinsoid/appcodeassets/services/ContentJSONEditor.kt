@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.xml.DomElement
 import com.intellij.util.xml.ui.PerspectiveFileEditor
+import java.awt.Component.TOP_ALIGNMENT
 import java.beans.PropertyChangeListener
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -19,49 +20,17 @@ class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEdi
 
     private var domElement: DomElement? = null
 
-//    override fun <T : Any?> getUserData(key: Key<T>): T? {
-//        return null
-//    }
-
-//    override fun <T : Any?> putUserData(key: Key<T>, value: T?) {
-//        key.set
-//    }
-
-//    override fun dispose() {
-//    }
-//
-//    override fun getComponent(): JComponent {
-//        return JPanel()
-//    }
-
     override fun getPreferredFocusedComponent(): JComponent? {
         return null
     }
 
     override fun getName(): String {
-        return "Content.json"
+        return "Panel"
     }
 
     override fun setState(state: FileEditorState) {
+        println(state)
     }
-//
-//    override fun isModified(): Boolean {
-//        return false
-//    }
-
-//    override fun isValid(): Boolean {
-//        return true
-//    }
-
-//    override fun addPropertyChangeListener(listener: PropertyChangeListener) {
-//    }
-
-//    override fun removePropertyChangeListener(listener: PropertyChangeListener) {
-//    }
-
-//    override fun getCurrentLocation(): FileEditorLocation? {
-//        return null
-//    }
 
     override fun commit() {
     }
@@ -83,6 +52,6 @@ class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEdi
             Extensions.colorset -> ColorAssetComponent(file)
             else -> JPanel()
         }
-        return JBScrollPane(content)
+        return JBScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
     }
 }
