@@ -7,10 +7,13 @@ import java.awt.FlowLayout
 import java.awt.geom.Rectangle2D
 import javax.swing.*
 
-class Section<Content: JComponent>(title: String, val content: () -> Content): Box(BoxLayout.PAGE_AXIS) {
+class Section<Content: JComponent>(title: JComponent, val content: () -> Content): Box(BoxLayout.PAGE_AXIS) {
+
+    constructor(title: String, content: () -> Content): this(JLabel("<html><pre>$title</pre></html>"), content)
 
     init {
-        add(JLabel("<html><pre>$title</pre></html>"))
+        title.alignmentX = LEFT_ALIGNMENT
+        add(title)
         add(createRigidArea(Dimension(0, 5)))
         add(content().apply { alignmentX = LEFT_ALIGNMENT })
         add(JSeparator(SwingConstants.HORIZONTAL))

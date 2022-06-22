@@ -14,7 +14,7 @@ import javax.swing.border.EmptyBorder
 class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
 
     private var deviceCheckboxs: MutableMap<Idiom, JCheckBox> = mutableMapOf()
-    private var devicePanels: MutableMap<Idiom, Section<JPanel>> = mutableMapOf()
+    private var devicePanels: MutableMap<Idiom, JPanel> = mutableMapOf()
     private var gamutComboBox: ComboBox<String>? = null
     private var appearancesComboBox: ComboBox<String>? = null
     private var highContrastCheckBox: JCheckBox? = null
@@ -26,17 +26,6 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
     private var canUpdate = false
 
     init {
-        addSection("Devices") {
-            Box(BoxLayout.PAGE_AXIS).apply {
-                for (device in Idiom.values()) {
-                    val checkbox = JCheckBox(device.title)
-                    checkbox.addItemListener { updateColorSet() }
-                    deviceCheckboxs[device] = checkbox
-                    add(checkbox)
-                }
-            }
-        }
-        add(createRigidArea(Dimension(0, spacing)))
         addSection("Appearances") {
             Box(BoxLayout.LINE_AXIS).apply {
                 add(
@@ -72,8 +61,11 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         }
         for (device in Idiom.values()) {
             add(createRigidArea(Dimension(0, spacing)))
+            val checkbox = JCheckBox(device.title)
+            checkbox.addItemListener { updateColorSet() }
+            deviceCheckboxs[device] = checkbox
             add(
-                Section(device.title) {
+                Section(checkbox) {
                     JPanel(WrapLayout(FlowLayout.LEADING)).apply {
                         alignmentX = Component.LEFT_ALIGNMENT
                         for (appearance in allAppearances) {
@@ -105,9 +97,9 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
                                 }
                             }
                         }
+                    }.apply {
+                        devicePanels[device] = this
                     }
-                }.apply {
-                    devicePanels[device] = this
                 }
             )
         }
@@ -157,7 +149,6 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         colorSpacesComboBox.forEach { (key, combobox) ->
             combobox.selectedIndex = ColorSpace.values().indexOf(colors[key]?.colorSpace ?: ColorSpace.srgb)
         }
-
 
         updateVisibles()
     }
