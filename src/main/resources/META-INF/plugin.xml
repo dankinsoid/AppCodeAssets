@@ -15,5 +15,6 @@
                   language="contents.json"
                   extensions="json"/>
         <fileEditorProvider implementation="com.github.dankinsoid.appcodeassets.services.ContentJSONViewProvider"/>
+        <projectViewNodeDecorator implementation="com.github.dankinsoid.appcodeassets.services.AssetsIconProvider"/>
     </extensions>
 </idea-plugin>

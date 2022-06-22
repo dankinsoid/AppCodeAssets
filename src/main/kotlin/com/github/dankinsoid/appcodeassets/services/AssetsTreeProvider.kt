@@ -34,6 +34,7 @@ class AssetsTreeProvider: TreeStructureProvider {
         if (parent is ProjectViewNode) {
             val file = parent.virtualFile ?: return children
             if (file.extension == assetsExtension) {
+                parent.icon = IconLoader.getIcon("/icons/assets.png", this.javaClass)
                 return xcassets(file, parent.project, settings)
             }
         }
