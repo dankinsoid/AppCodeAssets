@@ -62,11 +62,11 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         for (device in Idiom.values()) {
             add(createRigidArea(Dimension(0, spacing)))
             val checkbox = JCheckBox(device.title)
-            checkbox.addChangeListener { updateColorSet() }
+            checkbox.addItemListener { updateColorSet() }
             deviceCheckboxs[device] = checkbox
             add(
                 Section(checkbox) {
-                    JPanel(WrapLayout(FlowLayout.LEADING)).apply {
+                    JPanel(WrapLayout(FlowLayout.LEADING, spacing, spacing)).apply {
                         alignmentX = Component.LEFT_ALIGNMENT
                         for (appearance in allAppearances) {
                             for (highContrast in listOf(false, true)) {

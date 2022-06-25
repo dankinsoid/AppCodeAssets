@@ -1,5 +1,6 @@
 package com.github.dankinsoid.appcodeassets.services.ui
 
+import com.github.dankinsoid.appcodeassets.extensions.nullIfEmpty
 import com.github.dankinsoid.appcodeassets.extensions.pngSize
 import com.github.dankinsoid.appcodeassets.models.*
 import com.google.gson.GsonBuilder
@@ -41,23 +42,28 @@ class AppIconSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         for ((device, templates) in AppIcon.sets) {
             add(createRigidArea(Dimension(0, spacing)))
             val checkbox = JCheckBox(device.title)
-            checkbox.addChangeListener { updateSet() }
+            checkbox.addItemListener { updateSet() }
             deviceCheckboxs[device] = checkbox
             add(
                 Section(checkbox) {
-                    JPanel(WrapLayout(FlowLayout.LEADING)).apply {
+                    JPanel(WrapLayout(FlowLayout.LEADING, spacing, spacing)).apply {
                         alignmentX = Component.LEFT_ALIGNMENT
                         for (template in templates) {
                             for (size in template.sizes) {
-                                for (gamut in template.gamuts(gamutComboBox?.selectedIndex != 0)) {
+                                for (gamut in listOf(null) + Gamut.values()) {
                                     for (scale in template.scales) {
                                         for (direction in template.directions()) {
-                                            val title = listOf(
-                                                "size: ${size.toSize()}",
-                                                "gamut: ${gamut?.title ?: "Any"}",
+                                            var title = listOf(
+                                                "${size?.toSize() ?: "Any"} pt",
+                                                "${((size ?: 0.0) * (scale ?: 1).toDouble()).toSize()} px",
                                                 "scale: ${scale?.toScale() ?: "Any"}",
+                                                "gamut: ${gamut?.title ?: "Any"}",
                                                 "direction: ${direction?.title ?: "Any"}"
                                             ).joinToString("\n")
+                                            if (template.role != null || template.subtype != null) {
+                                                title += "\nrole: ${template.role?.title ?: "Null"}"
+                                                title += "\nsubtype: ${template.subtype ?: "Null"}"
+                                            }
                                             val key: AppIconSetKey = Pair(Pair(device, size), Pair(Pair(gamut, scale), direction))
                                             add(
                                                 Section(title) {
@@ -106,7 +112,41 @@ class AppIconSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
     }
 
     private fun updateSet() {
-
+        if (!canUpdate) return
+        val appIconSet = appIconSet
+        val images: MutableList<AppIcon> = mutableListOf()
+        for (device in AppIcon.sets.keys.filter { deviceCheckboxs[it]?.isSelected ?: false }) {
+            val templates = AppIcon.sets[device] ?: continue
+            for (template in templates) {
+                for (gamut in template.gamuts(gamutComboBox?.selectedIndex != 0)) {
+                    for (size in template.sizes) {
+                        for (scale in template.scales) {
+                            for (direction in template.directions()) {
+                                val key: AppIconSetKey =
+                                    Pair(Pair(device, size), Pair(Pair(gamut, scale), direction))
+                                val file = fileBoxes[key]?.selectedItem as? String ?: ""
+                                val image = AppIcon(
+                                    idiom = device,
+                                    size = size?.toSize(),
+                                    scale = scale?.toScale(),
+                                    languageDirection = direction,
+                                    filename = file.nullIfEmpty(),
+                                    subtype = template.subtype,
+                                    displayGamut = gamut,
+                                    role = template.role
+                                )
+                                images.add(image)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        appIconSet.images = images
+        this.appIconSet = appIconSet
+        canUpdate = false
+        updateVisibles()
+        canUpdate = true
     }
 
     private fun updateVisibles() {
@@ -116,18 +156,18 @@ class AppIconSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
             it.value.isVisible = idioms.contains(it.key)
         }
 
-        val filenames = this.filenames
+        val images = this.images
 
         fileSections.forEach { (key, section) ->
-            section.isVisible = filenames.containsKey(key)
+            section.isVisible = images[key] != null
         }
 
         fileBoxes.forEach { (key, box) ->
-            box.selectedItem = filenames[key]
+            box.selectedItem = images[key]?.filename
         }
     }
 
-    private val filenames: Map<AppIconSetKey, String?>
+    private val images: Map<AppIconSetKey, AppIcon>
         get() = appIconSet.images?.associate { image ->
             Pair(
                 Pair(image.idiom, image.size?.substringBefore("x")?.toDouble()),
@@ -135,7 +175,7 @@ class AppIconSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
                     Pair(image.displayGamut, image.scale?.substringBefore("x")?.toInt()),
                     image.languageDirection
                 )
-            ) to image.filename
+            ) to image
         } ?: mapOf()
 
     private fun files(key: AppIconSetKey): Array<String> {
@@ -149,7 +189,7 @@ class AppIconSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
                 imageSize.width == width && imageSize.height == width
             }
         }
-        return files.map { it.name }.toTypedArray()
+        return arrayOf("") + files.map { it.name }.toTypedArray()
     }
 
     var appIconSet: AppIconSet
@@ -165,6 +205,9 @@ class AppIconSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
             }
         } catch (_: Throwable) {
         }
+
+    private val selectesGamuts: List<Gamut?>
+        get() = Gamuts.values()[gamutComboBox?.selectedIndex ?: 0].gamuts
 }
 
 typealias AppIconSetKey = Pair<Pair<Idiom, Double?>, Pair<Pair<Gamut?, Int?>, LanguageDirection?>>

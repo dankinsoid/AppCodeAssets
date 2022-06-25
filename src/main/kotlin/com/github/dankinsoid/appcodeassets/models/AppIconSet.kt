@@ -83,7 +83,7 @@ data class AppIcon(
 }
 
 data class AppIconTemplate(
-    var sizes: List<Double>,
+    var sizes: List<Double?>,
     var role: Role? = null,
     var scales: List<Int?>,
     var subtype: String? = null,
@@ -91,7 +91,7 @@ data class AppIconTemplate(
     var bothDirections: Boolean = false
 ) {
 
-    fun set(idiom: Idiom, file: String?, size: Double, scale: Int?, gamut: Gamut?, languageDirection: LanguageDirection?): AppIcon {
+    fun set(idiom: Idiom, file: String?, size: Double?, scale: Int?, gamut: Gamut?, languageDirection: LanguageDirection?): AppIcon {
         return AppIcon(
             filename = file,
             displayGamut = gamut,
@@ -99,7 +99,7 @@ data class AppIconTemplate(
             languageDirection = languageDirection,
             role = role,
             scale = scale?.toScale(),
-            size = size.toSize(),
+            size = size?.toSize(),
             subtype = subtype
         )
     }
