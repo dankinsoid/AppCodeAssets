@@ -62,7 +62,7 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         for (device in Idiom.values()) {
             add(createRigidArea(Dimension(0, spacing)))
             val checkbox = JCheckBox(device.title)
-            checkbox.addItemListener { updateColorSet() }
+            checkbox.addChangeListener { updateColorSet() }
             deviceCheckboxs[device] = checkbox
             add(
                 Section(checkbox) {
@@ -205,7 +205,7 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
                         }
                         var color = colorPanels[key]?.selectedColor?.components()
                         if (color == null || (colorBoxes[key]?.isVisible != true && colorPanels[key]?.selectedColor == Color(0, 0, 0, 0))) {
-                            color = colorSet.colors?.first()?.color?.components
+                            color = colorSet.colors?.firstOrNull()?.color?.components
                         }
                         colors.add(
                             Colors(

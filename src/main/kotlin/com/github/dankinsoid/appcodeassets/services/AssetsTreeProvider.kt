@@ -40,7 +40,7 @@ class AssetsTreeProvider: TreeStructureProvider {
         }
         if (parent is PsiDirectoryNode) {
             val file = parent.virtualFile ?: return children
-            if (file.extension == null && file.hasAncestor { it.extension == assetsExtension }) {
+            if (file.extension == null && file.hasAncestor(false) { it.extension == assetsExtension }) {
                 return xcassets(file, parent.project, settings)
             }
         }
@@ -64,8 +64,8 @@ class AssetsTreeProvider: TreeStructureProvider {
     }
 }
 
-fun VirtualFile.hasAncestor(condition: (VirtualFile) -> Boolean): Boolean {
-    var current = parent
+fun VirtualFile.hasAncestor(includeThis: Boolean = true, condition: (VirtualFile) -> Boolean): Boolean {
+    var current = if (includeThis) this else parent
     while (current != null) {
         if (condition(current)) {
             return true

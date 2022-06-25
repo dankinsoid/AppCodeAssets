@@ -8,6 +8,7 @@ import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.IconLoader
 import com.intellij.psi.PsiDirectory
 import java.awt.*
 import java.awt.image.ImageObserver
@@ -21,6 +22,16 @@ class ColorDirectoryNode(project: Project, directory: PsiDirectory, settings: Vi
     override fun setupIcon(data: PresentationData?, psiDirectory: PsiDirectory?) {
         if (!Extensions.contains(virtualFile?.extension)) {
             super.setupIcon(data, psiDirectory)
+            return
+        }
+
+        if (virtualFile?.extension == Extensions.imageset.name) {
+            data?.setIcon(IconLoader.getIcon("/icons/imageset.svg", this.javaClass))
+            return
+        }
+
+        if (virtualFile?.extension == Extensions.appiconset.name) {
+            data?.setIcon(IconLoader.getIcon("/icons/appiconset.svg", this.javaClass))
             return
         }
 

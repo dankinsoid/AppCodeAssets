@@ -5,6 +5,7 @@
     <vendor>dankinsoid</vendor>
 
     <depends>com.intellij.modules.appcode</depends>
+    <depends>com.intellij.platform.images</depends>
     <idea-version since-build="211"/>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -17,4 +18,48 @@
         <fileEditorProvider implementation="com.github.dankinsoid.appcodeassets.services.ContentJSONViewProvider"/>
         <projectViewNodeDecorator implementation="com.github.dankinsoid.appcodeassets.services.AssetsIconProvider"/>
     </extensions>
+    <actions>
+        <group id="com.github.dankinsoid.newAssetGroup"
+                icon="/icons/assets.svg"
+                class="com.github.dankinsoid.appcodeassets.actions.NewAssetGroup"
+                text="Asset">
+            <add-to-group group-id="NewGroup" anchor="first"/>
+        </group>
+        <action id="com.github.dankinsoid.NewColorsetAction"
+                icon="AllIcons.Actions.Colors"
+                class="com.github.dankinsoid.appcodeassets.actions.NewColorsetAction"
+                text="Color Set">
+            <add-to-group group-id="com.github.dankinsoid.newAssetGroup" anchor="last"/>
+        </action>
+        <action id="com.github.dankinsoid.NewImagesetAction"
+                icon="/icons/imageset.svg"
+                class="com.github.dankinsoid.appcodeassets.actions.NewImagesetAction"
+                text="Image Set">
+            <add-to-group group-id="com.github.dankinsoid.newAssetGroup" anchor="last"/>
+        </action>
+        <action id="com.github.dankinsoid.appcodeassets.actions.NewAppIconsetAction"
+                icon="/icons/appiconset.svg"
+                class="com.github.dankinsoid.appcodeassets.actions.NewAppIconsetAction"
+                text="App Icon Set">
+            <add-to-group group-id="com.github.dankinsoid.newAssetGroup" anchor="last"/>
+        </action>
+        <action id="com.github.dankinsoid.newAssetFolder"
+                icon="AllIcons.Modules.ResourcesRoot"
+                class="com.github.dankinsoid.appcodeassets.actions.NewDirectoryAction"
+                text="Folder">
+            <add-to-group group-id="com.github.dankinsoid.newAssetGroup" anchor="last"/>
+        </action>
+        <action id="com.github.dankinsoid.NewAssets"
+                icon="/icons/assets.svg"
+                class="com.github.dankinsoid.appcodeassets.actions.NewAssets"
+                text="Assets">
+            <add-to-group group-id="NewGroup" anchor="last"/>
+        </action>
+        <action id="com.github.dankinsoid.NewContentsJSONAction"
+                icon="AllIcons.FileTypes.Json"
+                class="com.github.dankinsoid.appcodeassets.actions.NewContentsJSONAction"
+                text="Contents.json File">
+            <add-to-group group-id="NewGroup" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>

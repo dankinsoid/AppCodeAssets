@@ -1,5 +1,6 @@
 package com.github.dankinsoid.appcodeassets.services
 
+import com.github.dankinsoid.appcodeassets.actions.contentsJSON
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.fileEditor.FileEditorProvider
@@ -11,10 +12,10 @@ import com.intellij.util.xml.ui.PerspectiveFileEditorProvider
 
 class ContentJSONViewProvider: PerspectiveFileEditorProvider() {
 
-    private val supported = listOf(Extensions.colorset)
+    private val supported = listOf(Extensions.colorset, Extensions.appiconset, Extensions.imageset)
 
     override fun accept(project: Project, file: VirtualFile): Boolean {
-        return file.name == "Contents.json" && supported.map { it.name }.contains(file.parent?.extension)
+        return file.name == String.contentsJSON && supported.map { it.name }.contains(file.parent?.extension)
     }
 
     override fun createEditor(project: Project, file: VirtualFile): PerspectiveFileEditor {

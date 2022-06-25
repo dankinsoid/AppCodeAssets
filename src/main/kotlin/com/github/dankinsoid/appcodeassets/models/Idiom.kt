@@ -51,7 +51,7 @@ val Idiom.title: String
         Idiom.universal -> "Universal"
         Idiom.appLauncher -> "App Launcher"
         Idiom.companionSettings -> "Companion Settings"
-        Idiom.iosMarketing -> "iOS Marketing"
+        Idiom.iosMarketing -> "AppStore"
         Idiom.iphone -> "iPhone"
         Idiom.ipad -> "iPad"
         Idiom.mac -> "Mac"
@@ -59,6 +59,6 @@ val Idiom.title: String
         Idiom.quickLook -> "Quick Look"
         Idiom.tv -> "Apple TV"
         Idiom.watch -> "Watch"
-        Idiom.watchMarketing -> "Watch Marketing"
+        Idiom.watchMarketing -> "AppStore Watch"
         Idiom.car -> "CarPlay"
     }

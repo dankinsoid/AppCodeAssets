@@ -1,5 +1,6 @@
 package com.github.dankinsoid.appcodeassets.services
 
+import com.github.dankinsoid.appcodeassets.services.ui.AppIconSetComponent
 import com.github.dankinsoid.appcodeassets.services.ui.ColorAssetComponent
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
@@ -50,6 +51,7 @@ class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEdi
         val extension = Extensions.create(file.parent?.extension) ?: return JPanel()
         val content = when (extension) {
             Extensions.colorset -> ColorAssetComponent(file)
+            Extensions.appiconset -> AppIconSetComponent(file)
             else -> JPanel()
         }
         return JBScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
