@@ -2,6 +2,7 @@ package com.github.dankinsoid.appcodeassets.services
 
 import com.github.dankinsoid.appcodeassets.services.ui.AppIconSetComponent
 import com.github.dankinsoid.appcodeassets.services.ui.ColorAssetComponent
+import com.github.dankinsoid.appcodeassets.services.ui.ImageSetComponent
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
 import com.intellij.openapi.fileEditor.FileEditorState
@@ -30,7 +31,6 @@ class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEdi
     }
 
     override fun setState(state: FileEditorState) {
-        println(state)
     }
 
     override fun commit() {
@@ -52,6 +52,7 @@ class ContentJSONEditor(project: Project, file: VirtualFile): PerspectiveFileEdi
         val content = when (extension) {
             Extensions.colorset -> ColorAssetComponent(file)
             Extensions.appiconset -> AppIconSetComponent(file)
+            Extensions.imageset -> ImageSetComponent(file)
             else -> JPanel()
         }
         return JBScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)

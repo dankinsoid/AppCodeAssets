@@ -26,40 +26,13 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
     private var canUpdate = false
 
     init {
-        addSection("Appearances") {
-            Box(BoxLayout.LINE_AXIS).apply {
-                add(
-                    Box(BoxLayout.PAGE_AXIS).apply {
-                        val combobox = ComboBox<String>()
-                        combobox.model = DefaultComboBoxModel(Appearances.values().map { it.title }.toTypedArray())
-                        combobox.addItemListener { updateColorSet() }
-                        appearancesComboBox = combobox
-                        add(combobox)
-                        val box = JCheckBox("High Contrast").apply {
-                            alignmentX = LEFT_ALIGNMENT
-                            addItemListener { updateColorSet() }
-                        }
-                        highContrastCheckBox = box
-                        add(box)
-                    }
-                )
-                add(Filler(Dimension(0, 0), Dimension(0, 0), Dimension(Int.MAX_VALUE, 0)))
-            }
-        }
+        val appearancesPair = addAppearencesSection { updateColorSet() }
+        appearancesComboBox = appearancesPair.first
+        highContrastCheckBox = appearancesPair.second
         add(createRigidArea(Dimension(0, spacing)))
-        addSection("Gamut") {
-            Box(BoxLayout.LINE_AXIS).apply {
-                add(
-                    ComboBox<String>().apply {
-                        model = DefaultComboBoxModel(Gamuts.values().map { it.title }.toTypedArray())
-                        gamutComboBox = this
-                        addItemListener { updateColorSet() }
-                    }
-                )
-                add(Filler(Dimension(0, 0), Dimension(0, 0), Dimension(Int.MAX_VALUE, 0)))
-            }
-        }
-        for (device in Idiom.values()) {
+        gamutComboBox = addGamutSection { updateColorSet() }
+
+        for (device in Idiom.setValues()) {
             add(createRigidArea(Dimension(0, spacing)))
             val checkbox = JCheckBox(device.title)
             checkbox.addItemListener { updateColorSet() }
@@ -72,7 +45,7 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
                             for (highContrast in listOf(false, true)) {
                                 for (gamut in allGamuts) {
                                     add(
-                                        Section("${appearance?.title ?: "Any"} Appearance\n${if (highContrast) "High" else "Normal"} Contrast\n${gamut?.title ?: "Any"} Gamut") {
+                                        Section("${appearance?.title ?: "Any"} AppearanceType\n${if (highContrast) "High" else "Normal"} Contrast\n${gamut?.title ?: "Any"} Gamut") {
                                             Box(BoxLayout.PAGE_AXIS).apply {
                                                 add(
                                                     ComboBox<String>().apply {
@@ -141,7 +114,7 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         val appearances = Appearances.fromArray(colorSet.colors?.flatMap { it.appearances?.map { it.value } ?: listOf() }?.toTypedArray() ?: arrayOf())
         appearancesComboBox?.selectedIndex = Appearances.values().indexOf(appearances)
 
-        highContrastCheckBox?.isSelected = colorSet.colors?.flatMap { it.appearances?.map { it.appearance } ?: listOf() }?.contains(Appearance.contrast) ?: false
+        highContrastCheckBox?.isSelected = colorSet.colors?.flatMap { it.appearances?.map { it.appearance } ?: listOf() }?.contains(AppearanceType.contrast) ?: false
 
         /// MARK: - Colors
         val colors = this.colors
@@ -181,28 +154,12 @@ class ColorAssetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         if (!canUpdate) return
         val colorSet = colorSet
         val colors: MutableList<Colors> = mutableListOf()
-        for (device in Idiom.values().filter { deviceCheckboxs[it]?.isSelected ?: false }) {
+        for (device in Idiom.setValues().filter { deviceCheckboxs[it]?.isSelected ?: false }) {
             for (appearance in selectedAppearances) {
                 for (highContrast in selectedConstrants) {
                     for (gamut in selectesGamuts) {
                         val key = Pair(Pair(device, appearance), Pair(highContrast, gamut))
-                        val appearances: MutableList<ColorAppearance> = mutableListOf()
-                        if (highContrast) {
-                            appearances.add(
-                                ColorAppearance(
-                                    Appearance.contrast,
-                                    AppearanceValue.high,
-                                )
-                            )
-                        }
-                        if (appearance != null) {
-                            appearances.add(
-                                ColorAppearance(
-                                    Appearance.luminosity,
-                                    appearance,
-                                )
-                            )
-                        }
+                        val appearances = Appearance.list(highContrast, appearance)
                         var color = colorPanels[key]?.selectedColor?.components()
                         if (color == null || (colorBoxes[key]?.isVisible != true && colorPanels[key]?.selectedColor == Color(0, 0, 0, 0))) {
                             color = colorSet.colors?.firstOrNull()?.color?.components

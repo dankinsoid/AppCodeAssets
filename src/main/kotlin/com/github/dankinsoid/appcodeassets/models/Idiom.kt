@@ -44,6 +44,13 @@ enum class Idiom {
     /// An image for the App Store icon.
     @SerializedName("watch-marketing")
     watchMarketing;
+
+    companion object {
+
+        fun setValues(): List<Idiom> {
+            return listOf(universal, iphone, ipad, car, watch, tv, mac)
+        }
+    }
 }
 
 val Idiom.title: String

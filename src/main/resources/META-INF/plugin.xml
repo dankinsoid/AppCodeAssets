@@ -26,7 +26,7 @@
             <add-to-group group-id="NewGroup" anchor="first"/>
         </group>
         <action id="com.github.dankinsoid.NewColorsetAction"
-                icon="AllIcons.Actions.Colors"
+                icon="/icons/colors.svg"
                 class="com.github.dankinsoid.appcodeassets.actions.NewColorsetAction"
                 text="Color Set">
             <add-to-group group-id="com.github.dankinsoid.newAssetGroup" anchor="last"/>
@@ -44,7 +44,7 @@
             <add-to-group group-id="com.github.dankinsoid.newAssetGroup" anchor="last"/>
         </action>
         <action id="com.github.dankinsoid.newAssetFolder"
-                icon="AllIcons.Modules.ResourcesRoot"
+                icon="/icons/assetsfolder.svg"
                 class="com.github.dankinsoid.appcodeassets.actions.NewDirectoryAction"
                 text="Folder">
             <add-to-group group-id="com.github.dankinsoid.newAssetGroup" anchor="last"/>

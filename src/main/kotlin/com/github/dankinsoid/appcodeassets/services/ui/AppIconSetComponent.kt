@@ -27,18 +27,7 @@ class AppIconSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
     private var canUpdate = false
 
     init {
-        addSection("Gamut") {
-            Box(BoxLayout.LINE_AXIS).apply {
-                add(
-                    ComboBox<String>().apply {
-                        model = DefaultComboBoxModel(Gamuts.values().map { it.title }.toTypedArray())
-                        gamutComboBox = this
-                        addItemListener { updateSet() }
-                    }
-                )
-                add(Filler(Dimension(0, 0), Dimension(0, 0), Dimension(Int.MAX_VALUE, 0)))
-            }
-        }
+        gamutComboBox = addGamutSection { updateSet() }
         for ((device, templates) in AppIcon.sets) {
             add(createRigidArea(Dimension(0, spacing)))
             val checkbox = JCheckBox(device.title)

@@ -36,7 +36,7 @@ data class Colors(
     var idiom: Idiom?,
     var subtype: String?,
     var color: ColorData,
-    var appearances: List<ColorAppearance>?
+    var appearances: List<Appearance>?
 )
 
 data class ColorData(
@@ -118,65 +118,4 @@ enum class ColorSpace {
             displayP3 -> Gamut.displayP3
             else -> Gamut.sRGB
         }
-}
-
-data class ColorAppearance(
-    var appearance: Appearance = Appearance.luminosity,
-    var value: AppearanceValue = AppearanceValue.dark
-)
-
-val Iterable<ColorAppearance>.luminosity: AppearanceValue?
-    get() = firstOrNull { it.appearance == Appearance.luminosity }?.value
-
-val Iterable<ColorAppearance>.highContrast: Boolean
-    get() = firstOrNull { it.value == AppearanceValue.high } != null
-
-enum class AppearanceValue {
-    dark,
-    high,
-    light;
-
-    val title: String
-        get() = when (this) {
-            dark -> "Dark"
-            high -> "High"
-            light -> "Light"
-        }
-}
-
-enum class Appearance {
-    luminosity,
-    contrast
-}
-
-enum class Appearances {
-    none,
-    anyAndDark,
-    anyAndDarkAndLight;
-
-    val title: String
-        get() = when (this) {
-            none -> "None"
-            anyAndDark -> "Any, Dark"
-            anyAndDarkAndLight -> "Any, Dark and Light"
-        }
-
-    val appearances: List<AppearanceValue?>
-        get() = when (this) {
-            none -> listOf(null)
-            anyAndDark -> listOf(null, AppearanceValue.dark)
-            anyAndDarkAndLight -> listOf(null, AppearanceValue.dark, AppearanceValue.light)
-        }
-
-    companion object {
-        fun fromArray(array: Array<AppearanceValue>): Appearances {
-            return if (array.contains(AppearanceValue.light)) {
-                anyAndDarkAndLight
-            } else if (array.contains(AppearanceValue.dark)) {
-                anyAndDark
-            } else {
-                none
-            }
-        }
-    }
 }

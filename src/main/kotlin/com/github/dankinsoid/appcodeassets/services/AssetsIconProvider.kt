@@ -1,5 +1,6 @@
 package com.github.dankinsoid.appcodeassets.services
 
+import com.github.dankinsoid.appcodeassets.models.Images
 import com.intellij.ide.FileIconProvider
 import com.intellij.ide.IconProvider
 import com.intellij.ide.projectView.PresentationData

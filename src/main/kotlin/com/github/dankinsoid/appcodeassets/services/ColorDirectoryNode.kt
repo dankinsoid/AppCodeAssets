@@ -20,6 +20,10 @@ class ColorDirectoryNode(project: Project, directory: PsiDirectory, settings: Vi
     private val gson = Gson()
 
     override fun setupIcon(data: PresentationData?, psiDirectory: PsiDirectory?) {
+        if (virtualFile?.extension == null) {
+            data?.setIcon(IconLoader.getIcon("/icons/assetsfolder.svg", this.javaClass))
+            return
+        }
         if (!Extensions.contains(virtualFile?.extension)) {
             super.setupIcon(data, psiDirectory)
             return
