@@ -2,6 +2,6 @@
 
 # AppCodeAssets Changelog
 
-## [Unreleased]
+## [Released]
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+- Support for Image Set, App Icon Set and Color Set.
