@@ -2,6 +2,6 @@
 
 # AppCodeAssets Changelog
 
-## [Released]
+## [Unreleased]
 ### Added
 - Support for Image Set, App Icon Set and Color Set.

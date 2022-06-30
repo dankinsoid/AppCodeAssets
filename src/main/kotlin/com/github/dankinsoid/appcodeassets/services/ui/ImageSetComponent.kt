@@ -13,7 +13,6 @@ import com.intellij.util.ui.WrapLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.FlowLayout
-import java.awt.GridLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
@@ -26,7 +25,8 @@ class ImageSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
     private var directionComboBox: ComboBox<String>? = null
 
     private var devicePanels: MutableMap<Idiom, JPanel> = mutableMapOf()
-    private var deviceCheckboxs: MutableMap<Idiom, JCheckBox> = mutableMapOf()
+    private var deviceSections: MutableMap<Idiom, Section<JPanel>> = mutableMapOf()
+    private var deviceCheckboxes: MutableMap<Idiom, JCheckBox> = mutableMapOf()
     private var fileBoxes: MutableMap<ImageSetKey, ComboBox<String>> = mutableMapOf()
     private var fileSections: MutableMap<ImageSetKey, Section<ComboBox<String>>> = mutableMapOf()
     private var appearancesComboBox: ComboBox<String>? = null
@@ -66,45 +66,10 @@ class ImageSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
             add(createRigidArea(Dimension(0, spacing)))
             val checkbox = JCheckBox(device.title)
             checkbox.addItemListener { updateSet() }
-            deviceCheckboxs[device] = checkbox
+            deviceCheckboxes[device] = checkbox
             add(
-                Section(checkbox) {
-                    JPanel(WrapLayout(FlowLayout.LEADING, spacing, spacing)).apply {
-                        alignmentX = Component.LEFT_ALIGNMENT
-                        for (appearance in allAppearances) {
-                            for (highContrast in listOf(false, true)) {
-                                for (gamut in listOf(null) + Gamut.values()) {
-                                    for (scale in Scales.scales) {
-                                        for (direction in LanguageDirections.directions) {
-                                            val title = listOf(
-                                                "scale: ${scale?.toScale() ?: "Any"}",
-                                                "gamut: ${gamut?.title ?: "Any"}",
-                                                "direction: ${direction?.title ?: "Any"}",
-                                                "appearance: ${appearance?.title ?: "Any"}",
-                                                "contrast: ${if (highContrast) "High" else "Normal"}"
-                                            ).joinToString("\n")
-
-                                            val key: ImageSetKey = Pair(Pair(device, appearance), Pair(Pair(highContrast, scale), Pair(gamut, direction)))
-                                            add(
-                                                Section(title) {
-                                                    ComboBox<String>().apply {
-                                                        model = DefaultComboBoxModel(files())
-                                                        fileBoxes[key] = this
-                                                        addItemListener { updateSet() }
-                                                    }
-                                                }.apply {
-                                                    alignmentY = BOTTOM_ALIGNMENT
-                                                    fileSections[key] = this
-                                                }
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }.apply {
-                        devicePanels[device] = this
-                    }
+                Section<JPanel>(checkbox).apply {
+                    deviceSections[device] = this
                 }
             )
         }
@@ -120,7 +85,7 @@ class ImageSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
 
         /// MARK: - Devices
         val idioms = imageSet.images?.map { it.idiom } ?: listOf()
-        deviceCheckboxs.forEach { (idiom, checkbox) ->
+        deviceCheckboxes.forEach { (idiom, checkbox) ->
             checkbox.isSelected = idioms.contains(idiom)
         }
 
@@ -155,7 +120,7 @@ class ImageSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
         if (!canUpdate) return
         val imageSet = imageSet
         val images: MutableList<Images> = mutableListOf()
-        for (device in Idiom.setValues().filter { deviceCheckboxs[it]?.isSelected ?: false }) {
+        for (device in Idiom.setValues().filter { deviceCheckboxes[it]?.isSelected ?: false }) {
             for (appearance in selectedAppearances) {
                 for (gamut in selectesGamuts) {
                     for (contrast in selectedConstrants) {
@@ -200,8 +165,8 @@ class ImageSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
     private fun updateVisibles() {
         val idioms = imageSet.images?.map { it.idiom } ?: listOf()
 
-        devicePanels.forEach {
-            it.value.isVisible = idioms.contains(it.key)
+        Idiom.setValues().forEach {
+            devicePanel(it, !idioms.contains(it))
         }
 
         val images = this.images
@@ -246,6 +211,63 @@ class ImageSetComponent(val file: VirtualFile): Box(BoxLayout.PAGE_AXIS) {
             }
         } catch (_: Throwable) {
         }
+
+    private fun devicePanel(device: Idiom, hide: Boolean): JPanel? {
+        val panel = devicePanels[device]
+        if ((panel == null) == hide) {
+            return panel
+        }
+        if (hide) {
+            panel?.parent?.remove(panel)
+            devicePanels.remove(device)
+            return null
+        } else {
+            setContent(device)
+            return devicePanels[device]
+        }
+    }
+
+    private fun setContent(device: Idiom) {
+        val section = deviceSections[device] ?: return
+        section.setContent {
+            JPanel(WrapLayout(FlowLayout.LEADING, spacing, spacing)).apply {
+                alignmentX = Component.LEFT_ALIGNMENT
+                for (appearance in allAppearances) {
+                    for (highContrast in listOf(false, true)) {
+                        for (gamut in listOf(null) + Gamut.values()) {
+                            for (scale in Scales.scales) {
+                                for (direction in LanguageDirections.directions) {
+                                    val title = listOf(
+                                        "scale: ${scale?.toScale() ?: "Any"}",
+                                        "gamut: ${gamut?.title ?: "Any"}",
+                                        "direction: ${direction?.title ?: "Any"}",
+                                        "appearance: ${appearance?.title ?: "Any"}",
+                                        "contrast: ${if (highContrast) "High" else "Normal"}"
+                                    ).joinToString("\n")
+
+                                    val key: ImageSetKey = Pair(Pair(device, appearance), Pair(Pair(highContrast, scale), Pair(gamut, direction)))
+                                    add(
+                                        Section(title) {
+                                            ComboBox<String>().apply {
+                                                model = DefaultComboBoxModel(files())
+                                                fileBoxes[key] = this
+                                                addItemListener { updateSet() }
+                                            }
+                                        }.apply {
+                                            alignmentY = BOTTOM_ALIGNMENT
+                                            fileSections[key] = this
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }.apply {
+                devicePanels[device] = this
+            }
+        }
+    }
 
     private val allAppearances: List<AppearanceValue?>
         get() = listOf(null, AppearanceValue.light, AppearanceValue.dark)

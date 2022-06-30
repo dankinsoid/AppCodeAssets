@@ -6,7 +6,15 @@
 
 <!-- Plugin description -->
 This plugin provides support for assets.
+With this plugin all asset resources and folders are visible in project tree, you can create new assets and modify it in a UI editor.
 
+Full supported asset types:
+- App Icon Set
+- Image Set
+- Color Set
+
+![screen1](https://github.com/dankinsoid/AppCodeAssets/screens/screen1.png)
+![screen2](https://github.com/dankinsoid/AppCodeAssets/screens/screen2.png)
 <!-- Plugin description end -->
 
 ## License
