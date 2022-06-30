@@ -1,8 +1,7 @@
 # AppCodeAssets
 
-![Build](https://github.com/dankinsoid/AppCodeAssets/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
+[![Version](https://img.shields.io/jetbrains/plugin/v/19441-appcodeassets.svg)](https://plugins.jetbrains.com/plugin/19441-appcodeassets)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/19441-appcodeassets.svg)](https://plugins.jetbrains.com/plugin/19441-appcodeassets)
 
 <!-- Plugin description -->
 This plugin provides support for assets.
