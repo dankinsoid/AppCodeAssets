@@ -13,8 +13,8 @@ Full supported asset types:
 - Image Set
 - Color Set
 
-![screen1](https://github.com/dankinsoid/AppCodeAssets/screens/screen1.png)
-![screen2](https://github.com/dankinsoid/AppCodeAssets/screens/screen2.png)
+![screen1](https://github.com/dankinsoid/AppCodeAssets/tree/main/screens/screen1.png)
+![screen2](https://github.com/dankinsoid/AppCodeAssets/tree/main/screens/screen2.png)
 <!-- Plugin description end -->
 
 ## License
