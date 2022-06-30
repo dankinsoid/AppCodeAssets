@@ -15,6 +15,9 @@ With this plugin all asset resources and folders are visible in project tree, yo
 
 ![screen1](https://github.com/dankinsoid/AppCodeAssets/blob/main/screens/screen1.png?raw=true)
 ![screen2](https://github.com/dankinsoid/AppCodeAssets/blob/main/screens/screen2.png?raw=true)
+
+#### PS
+Recommended to use with [PDF Viewer](https://plugins.jetbrains.com/plugin/14494-pdf-viewer) and [Material Icons](https://plugins.jetbrains.com/plugin/10044-atom-material-icons).
 <!-- Plugin description end -->
 
 ## License
